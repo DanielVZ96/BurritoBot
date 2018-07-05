@@ -1,5 +1,4 @@
 from django import forms
-from .models import Profile
+from .models import Command
 
-class CommandForm(forms.ModelForm):
-    pass
+CommandFormSet = forms.modelformset_factory(Command, fields=('command', 'response'))

@@ -1,11 +1,14 @@
 from urllib.request import urlopen
 from json import dump
-
+global CLIENT_ID
+global CLIENT_SECRET_ID
 CLIENT_ID = 'vkanazzpgcy7w9rfhvbgp2pmdw74g6'
 CLIENT_SECRET_ID = '92um4d83q6rgl1f92oamuokqatbua2'
+REDIRECT_URI = 'http://127.0.0.1:8000/burritobot/authenticated'
 
 def new_user_token_request(redirect_uri, scope):
-    request = 'https://id.twitch.tv/oauth2/authorize?client_id={}&redirect_uri={}&response_type=code&scope={}'.format(CLIENT_ID,redirect_uri,scope)
+    request = 'https://id.twitch.tv/oauth2/authorize?response_type=code&client_id={}&redirect_uri={}&scope={}'.format(CLIENT_ID,REDIRECT_URI,scope)
+    print(request)
     return request
 
 def new_access_token_request(redirect_uri, code):

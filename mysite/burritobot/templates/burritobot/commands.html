@@ -5,6 +5,31 @@
     <title>Commands - BurritoBot</title>
 </head>
 <body>
-
+<div id="Commands">
+    <h2 id="saved_commands">Saved Commands</h2>
+    {% if command_formset %}
+    <form method="post" id="command_formset" action="{% url 'edit_commands' %}">
+        {% csrf_token %}
+        {{ command_formset.management_form }}
+        {% for form in formset %}
+            <ul>
+                <li>{{ form.command }}</li>
+                <li>{{ form.response }}</li>
+            </ul>
+        {% endfor %}
+        <input type="submit" value="Submit">
+    </form>
+    {% else %}
+    <p class="no_commands">There are no commands saved... yet.</p>
+    {% endif %}
+</div>
+<div id="New-Command">
+    <h2 id="add-new-command">Add New Command</h2>
+    <form method="post" action="{% url 'new_commands' %}">
+        {% csrf_token %}
+        {{ new_command_form }}
+        <input type="submit" value="Submit"/>
+    </form>
+</div>
 </body>
 </html>

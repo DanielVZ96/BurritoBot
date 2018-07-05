@@ -1,3 +1,5 @@
 from django.contrib import admin
+from .models import Command, AuthInfo
 
-# Register your models here.
+admin.site.register(Command)
+admin.site.register(AuthInfo)
