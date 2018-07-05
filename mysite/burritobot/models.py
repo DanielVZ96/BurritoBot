@@ -17,7 +17,4 @@ class Command(models.Model):
     def __str__(self):
         return self.command
 
-class CommandForm(ModelForm):
-    class Meta:
-        model = Command
-        fields = ['command', 'response']
+

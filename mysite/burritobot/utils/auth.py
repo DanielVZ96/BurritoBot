@@ -1,18 +1,18 @@
-from urllib.request import urlopen
-from json import dump
+import requests
 global CLIENT_ID
+import json
 global CLIENT_SECRET_ID
 CLIENT_ID = 'vkanazzpgcy7w9rfhvbgp2pmdw74g6'
 CLIENT_SECRET_ID = '92um4d83q6rgl1f92oamuokqatbua2'
-REDIRECT_URI = 'http://127.0.0.1:8000/burritobot/authenticated'
+REDIRECT_URI = 'http://localhost:8000/burritobot/register/'
 
-def new_user_token_request(redirect_uri, scope):
+def authorize_request(scope):
     request = 'https://id.twitch.tv/oauth2/authorize?response_type=code&client_id={}&redirect_uri={}&scope={}'.format(CLIENT_ID,REDIRECT_URI,scope)
-    print(request)
     return request
 
-def new_access_token_request(redirect_uri, code):
-    request = 'https://id.twitch.tv/oauth2/token?client_id={}&client_secret={}&code={}&grant_type=authorization_code&redirect_uri={}'.format(CLIENT_ID, CLIENT_SECRET_ID, code, redirect_uri)
-    response = urlopen(request)
-    response_dict = dump(response)
+def token_request(code):
+    url = 'https://api.twitch.tv/kraken/oauth2/token?client_id={}&client_secret={}&code={}&grant_type=authorization_code&redirect_uri={}'.format(CLIENT_ID, CLIENT_SECRET_ID, code, REDIRECT_URI)
+    request = requests.post(url)
+    response_dict = json.loads(request.text)
+    print(response_dict)
     return response_dict
