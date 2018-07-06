@@ -23,19 +23,6 @@ def register(request):
         return render(request, 'burritobot/register.html', context)
 
 
-
-
-def authenticated(request, code):
-    token_dict = auth.new_access_token_request('http://127.0.0.1:8000/authenticated', code)
-    new_auth = AuthInfo()
-    new_auth.expiration_date = datetime.datetime.now() + datetime.timedelta(seconds=int(token_dict['expires_in']))
-    new_auth.access_token = token_dict['access_token']
-    new_auth.refresh_token = token_dict['refresh_token']
-    new_auth.scope = token_dict['scope']
-    new_auth.save()
-    return render(request, 'burritobot/commands.html', {})
-
-
 def edit_commands(request):
     new_command_form = CommandForm(prefix='new-command')
     if request.method == 'GET':

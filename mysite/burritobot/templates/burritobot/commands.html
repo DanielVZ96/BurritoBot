@@ -7,16 +7,11 @@
 <body>
 <div id="Commands">
     <h2 id="saved_commands">Saved Commands</h2>
-    {% if command_formset %}
+    {% if command_formset.forms %}
     <form method="post" id="command_formset" action="{% url 'edit_commands' %}">
-        {% csrf_token %}
-        {{ command_formset.management_form }}
-        {% for form in formset %}
-            <ul>
-                <li>{{ form.command }}</li>
-                <li>{{ form.response }}</li>
-            </ul>
-        {% endfor %}
+            {% csrf_token %}
+            {{ command_formset.content_manager }}
+            {{ command_formset }}
         <input type="submit" value="Submit">
     </form>
     {% else %}
