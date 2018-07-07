@@ -16,3 +16,13 @@ def token_request(code):
     response_dict = json.loads(request.text)
     print(response_dict)
     return response_dict
+
+def get_user_dict(token):
+    url = 'https://api.twitch.tv/kraken/user'
+    headers = {
+        'Accept': 'application/vnd.twitchtv.v5+json',
+        'Client-ID': CLIENT_ID,
+        'Authorization': 'OAuth {}'.format(token)
+    }
+    request = requests.get(url, headers=headers)
+    return json.loads(request.text)

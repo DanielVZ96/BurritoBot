@@ -55,8 +55,9 @@ async def get_chat_message(line):
 
 
 async def check_commands(websocket, msg, author, channel):
+    id = database_utils.get_id_from_channel(channel)
     if msg[0] == COMMAND_PREFIX:
-        response = database_utils.get_response('../../../db.sqlite3', msg[1:])
+        response = database_utils.get_response('../../../db.sqlite3', msg[1:], id)
         if response:
             await websocket.send('PRIVMSG #{} :{}'.format(channel, response))
         elif msg[1:].split(" ")[0] in super_commands.existing_commands():

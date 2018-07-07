@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .models import AuthInfo, Command
+from .models import TwitchUser, Command
 from django.forms import formset_factory
 from .utils import auth
 from .forms import CommandForm, CommandFormSet
@@ -14,11 +14,18 @@ def register(request):
         print('scope: ' + scope)
         auth_dict = auth.token_request(code)
         expiration_date = datetime.datetime.now() + datetime.timedelta(seconds=int(auth_dict['expires_in']))
-        new_auth = AuthInfo(access_token=auth_dict['access_token'], refresh_token=auth_dict['refresh_token'], expiration_date=expiration_date, scope=scope)
-        new_auth.save()
+        user_dict = auth.get_user_dict(auth_dict['access_token'])
+
+        if not TwitchUser.objects.get(twitch_id=int(user_dict['_id'])).exists():
+            user = TwitchUser(twitch_id=int(user_dict['_id']), twitch_name=user_dict['display_name'], email=user_dict['email'], access_token=auth_dict['access_token'], refresh_token=auth_dict['refresh_token'], expiration_date=expiration_date, scope=scope)
+            user.save()
+        else:
+            user = TwitchUser.objects.get(twitch_id=int(user_dict['_id']))
+            user.access_token, user.refresh_token, user.expiration_date, user.scope = auth_dict['access_token'], auth_dict['refresh_token'], auth_dict['expiration_date'], auth_dict['scope']
+            user.save()
         return commands(request)
     else:
-        get_request = auth.authorize_request('chat_login')
+        get_request = auth.authorize_request('chat_login+user_read+channel_feed_edit')
         context = {'get_request':get_request}
         return render(request, 'burritobot/register.html', context)
 
