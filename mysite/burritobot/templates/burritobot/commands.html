@@ -6,23 +6,18 @@
 </head>
 <body>
 <div id="Commands">
-    <h2 id="saved_commands">Saved Commands</h2>
-    {% if command_formset.forms %}
     <form method="post" id="command_formset" action="{% url 'edit_commands' %}">
-            {% csrf_token %}
-            {{ command_formset.content_manager }}
-            {{ command_formset }}
-        <input type="submit" value="Submit">
-    </form>
-    {% else %}
-    <p class="no_commands">There are no commands saved... yet.</p>
-    {% endif %}
-</div>
-<div id="New-Command">
-    <h2 id="add-new-command">Add New Command</h2>
-    <form method="post" action="{% url 'new_commands' %}">
-        {% csrf_token %}
-        {{ new_command_form }}
+        <div id="existing-commands">
+        <h1 id="saved_commands">Commands</h1>
+        {% if command_formset.forms %}
+                {% csrf_token %}
+                {{ command_formset.management_form }}
+                {% for form in command_formset %}
+                    {{ form }}
+                {% empty %}
+                <p class="no_commands">There are no commands saved... yet.</p>
+                {% endfor %}
+        {% endif %}
         <input type="submit" value="Submit"/>
     </form>
 </div>
