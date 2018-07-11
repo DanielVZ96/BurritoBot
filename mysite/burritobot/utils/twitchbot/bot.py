@@ -3,14 +3,16 @@ import asyncio
 import database_utils
 import super_commands
 
-global TOKEN
-global COMMAND_PREFIX
-global CHANNEL
 global NICK
-global RESPONSE_COUNT
+global COMMAND_PREFIX
+global db_location
+global RUNNING
+
+NICK = 'burritosr'
 COMMAND_PREFIX = '!'
 db_location = '../../../db.sqlite3'
 RUNNING = []
+
 
 async def twitch_bot(token, channel):
     try:
@@ -23,7 +25,7 @@ async def twitch_bot(token, channel):
             global connection
             connection = True
             mute = False
-            while connection == True:
+            while connection:
                 buffer = await websocket.recv()
                 print(buffer)
                 lines = buffer.split('\n')
@@ -40,7 +42,7 @@ async def twitch_bot(token, channel):
                         else:
                             await check_commands(websocket, msg, channel, author)
     except Exception as e:
-        print('SOMETHING OCCURED, BOT RESTARTING\nError: {}'.format(e))
+        print('SOMETHING OCCURRED, BOT RESTARTING\nError: {}'.format(e))
         await twitch_bot(token, channel)
 
 
@@ -53,7 +55,7 @@ async def check_ping(websocket, line):
 async def get_chat_message(line):
     msg = line.split(':')
     if len(msg) >= 2 and 'PRIVMSG' in msg[1]:
-        return (msg[2:][0] , msg[1].split('!')[0])
+        return msg[2:][0] , msg[1].split('!')[0]
     else:
         return False
 
@@ -61,7 +63,7 @@ async def get_chat_message(line):
 async def check_commands(websocket, msg, channel, author):
     id = database_utils.get_id_from_channel(db_location, channel)
     if msg[0] == COMMAND_PREFIX:
-        response = database_utils.get_response('../../../db.sqlite3', msg[1:], id)
+        response = database_utils.get_response(db_location, msg[1:], id)
         if response:
             await websocket.send('PRIVMSG #{} :{}'.format(channel, response))
         elif msg[1:].split(" ")[0] in super_commands.existing_commands(id):
@@ -69,8 +71,6 @@ async def check_commands(websocket, msg, channel, author):
             if response:
                 print(response)
                 await websocket.send('PRIVMSG #{} :{}'.format(channel, response))
-
-
 
 
 async def _token_channel_pairs():
@@ -86,7 +86,6 @@ async def main():
         bots.append(asyncio.ensure_future(twitch_bot(token,channel)))
         RUNNING.append(channel)
     await asyncio.gather(*bots)
-
 
 
 if __name__ == '__main__':

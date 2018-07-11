@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+
 class TwitchUser(models.Model):
     twitch_id = models.IntegerField()
     twitch_name = models.CharField(max_length=100)

@@ -9,7 +9,9 @@ def _get_ids(game, category, variable=False, value=False):
     game_data = json.loads(game_req.text)['data']
     game_id = game_data['id']
 
-    categories_uri, variables_uri = [x['uri'] for x in list(filter(lambda d: d['rel'] == 'variables' or d['rel'] == 'categories', game_data['links']))]
+    categories_uri, variables_uri =\
+        [x['uri']
+         for x in list(filter(lambda d: d['rel'] == 'variables' or d['rel'] == 'categories', game_data['links']))]
 
     categories_req = requests.get(str(categories_uri))
     categories_data = json.loads(categories_req.text)['data']
