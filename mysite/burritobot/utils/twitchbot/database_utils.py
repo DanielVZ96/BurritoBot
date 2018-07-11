@@ -50,12 +50,14 @@ def get_id_from_channel(db_location, channel):
     return id
 
 def get_channel_from_id(db_location, id):
+    print(id)
     connection = sqlite3.connect(db_location)
     cursor = connection.cursor()
-    channel = cursor.execute("SELECT twitch_name FROM burritobot_twitchuser WHERE id=?",(id,)).fetchone()[0]
+    channel = cursor.execute("SELECT twitch_name FROM burritobot_twitchuser WHERE user_id=?",(id,)).fetchone()[0]
     return channel
 
 
 if __name__ == '__main__':
+    get_channel_from_id('../../../db.sqlite3', 8)
     users = get_user_list('../../../db.sqlite3')
     print(users)

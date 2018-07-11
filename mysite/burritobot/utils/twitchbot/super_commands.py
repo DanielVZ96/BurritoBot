@@ -55,7 +55,7 @@ def get_top_str(game, category, variable=False, value=False):
 
 
 def existing_super_commands():
-    return ['top', 'commands']
+    return ['top', 'commands', 'mute']
 
 
 def existing_commands(id):
@@ -69,9 +69,9 @@ def super_command(command, id):
     command_root = command.split(" ")[0]
     if command_root.strip() == 'top':
         if len(command[4:].split('/')) < 2:
-            return 'Please add enough parameters'
+            return 'Please add enough parameters. You have to call top this way: top game/category(/variable-name/variable-value). (Examples: top botw/Any% , top botw/Any%/Amiibo/No Amiibo). Every game/category/variable name has to be the same as the one speedrun.com uses. Have fun!'
         print('top called!')
-        params = command[4:].split('/')
+        params = command[5:].split('/')
         try:
             if len(params) == 4:
                 g, c, v, va = params
@@ -80,7 +80,7 @@ def super_command(command, id):
                 g, c = params[:2]
                 return get_top_str(g,c)
         except KeyError:
-            return "Couldn't find any run like that. Try another formating (¿top)."
+            return "Couldn't find any run like that. Try another formatting."
     elif command_root.strip() == 'commands':
         return existing_commands(id)
 

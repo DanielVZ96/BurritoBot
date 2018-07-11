@@ -8,8 +8,7 @@ global COMMAND_PREFIX
 global CHANNEL
 global NICK
 global RESPONSE_COUNT
-COMMAND_PREFIX = '¿'
-NICK = 'burritosr'
+COMMAND_PREFIX = '!'
 db_location = '../../../db.sqlite3'
 RUNNING = []
 
@@ -23,6 +22,7 @@ async def twitch_bot(token, channel):
             await websocket.send('JOIN #{}'.format(channel))
             global connection
             connection = True
+            mute = False
             while connection == True:
                 buffer = await websocket.recv()
                 print(buffer)
@@ -35,9 +35,12 @@ async def twitch_bot(token, channel):
                         author = msg[1]
                         msg = msg[0]
                         print('message: ' + msg, 'author: ' + author, sep='\n')
-                        await check_commands(websocket, msg, channel, author)
-    except:
-        print('SOMETHING OCCURED, BOT RESTARTING')
+                        if msg[1:].split(" ")[0] == 'mute':
+                            mute = not mute
+                        else:
+                            await check_commands(websocket, msg, channel, author)
+    except Exception as e:
+        print('SOMETHING OCCURED, BOT RESTARTING\nError: {}'.format(e))
         await twitch_bot(token, channel)
 
 
@@ -69,10 +72,11 @@ async def check_commands(websocket, msg, channel, author):
 
 
 
+
 async def _token_channel_pairs():
     user_ids = database_utils.get_user_list(db_location)
     token_channel_pairs = [(database_utils.get_access_token(db_location, i), database_utils.get_channel_from_id(db_location, i)) for i in user_ids]
-    await token_channel_pairs
+    return token_channel_pairs
 
 
 async def main():
@@ -82,8 +86,6 @@ async def main():
         bots.append(asyncio.ensure_future(twitch_bot(token,channel)))
         RUNNING.append(channel)
     await asyncio.gather(*bots)
-
-
 
 
 
