@@ -2,6 +2,7 @@ import websockets
 import asyncio
 import database_utils
 import super_commands
+import traceback
 
 global NICK
 global COMMAND_PREFIX
@@ -42,8 +43,12 @@ async def twitch_bot(token, channel):
                         else:
                             await check_commands(websocket, msg, channel, author)
     except Exception as e:
-        print('SOMETHING OCCURRED, BOT RESTARTING\nError: {}'.format(e))
-        await twitch_bot(token, channel)
+        if str(e).strip() == 'Event loop is closed':
+            await print('Bot Killed')
+        else:
+            traceback_str = ''.join(traceback.format(e.__traceback__))
+            print('SOMETHING OCCURRED, BOT RESTARTING\nError: {}\nTraceback:\n{}'.format_tb(e, traceback_str))
+            await twitch_bot(token, channel)
 
 
 async def check_ping(websocket, line):
