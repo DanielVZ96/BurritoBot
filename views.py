@@ -66,7 +66,6 @@ def login_view(request):
 @login_required(login_url='/burritobot/login/')
 def edit_commands(request):
     user = request.user
-    CommandInlineFormset = inlineformset_factory(User, Command, fields=('command', 'response'))
     if request.method == 'POST':
         command_formset = inlineformset_factory(request.POST, request.FILES, instance=user)
         if command_formset.is_valid():
