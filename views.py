@@ -61,7 +61,6 @@ def login_view(request):
     return render(request, 'burritobot/login.html', context)
 
 
-# TODO MAKE COMMAND VIEWS USE THE AUTH BACKEND
 @login_required(login_url='/burritobot/login/')
 def edit_commands(request):
     if request.method == 'POST':
