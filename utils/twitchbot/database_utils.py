@@ -4,7 +4,8 @@ import sqlite3
 def get_user_list(db_location):
     connection = sqlite3.connect(db_location)
     cursor = connection.cursor()
-    users = cursor.execute("SELECT user_id FROM burritobot_twitchuser").fetchall()[0]
+    users_qs = cursor.execute("SELECT user_id FROM burritobot_twitchuser").fetchall()
+    users = [q[0] for q in users_qs]
     return users
 
 
@@ -33,7 +34,7 @@ def get_commands(db_location, id):
     connection = sqlite3.connect(db_location)
     cursor = connection.cursor()
     commands = cursor.execute("SELECT command,response FROM burritobot_command WHERE user_id=?", (id, ))
-    return [pair[0] for pair in commands.fetchall()]
+    return [pair for pair in commands.fetchall()]
 
 
 def get_access_token(db_location, id):
@@ -51,7 +52,6 @@ def get_id_from_channel(db_location, channel):
 
 
 def get_channel_from_id(db_location, id):
-    print(id)
     connection = sqlite3.connect(db_location)
     cursor = connection.cursor()
     channel = cursor.execute("SELECT twitch_name FROM burritobot_twitchuser WHERE user_id=?",(id,)).fetchone()[0]

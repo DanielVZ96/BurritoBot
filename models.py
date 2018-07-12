@@ -18,8 +18,8 @@ class TwitchUser(models.Model):
 
 
 class Command(models.Model):
-    command = models.CharField(max_length=100)
-    response = models.CharField(max_length=2000)
+    command = models.CharField(max_length=500)
+    response = models.CharField(max_length=500)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):

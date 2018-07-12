@@ -37,7 +37,12 @@ def get_top_str(game, category, variable=False, value=False):
         game_id, category_id, variable_id, value_id = _get_ids(game, category, variable, value)
         leaderboard_url = '{}/{}/category/{}?var-{}={}'.format(url, game_id, category_id, variable_id, value_id)
     else:
+        print(game, category)
         game_id, category_id = _get_ids(game, category)
+        print(game_id, category_id)
+        # Fix for % in categories
+        if '%' in category and category.strip('%').isdigit():
+            category_id = category.strip('%')
         leaderboard_url = '{}/{}/category/{}'.format(url, game_id, category_id)
 
     req = requests.get(leaderboard_url)
@@ -57,7 +62,7 @@ def get_top_str(game, category, variable=False, value=False):
 
 
 def existing_super_commands():
-    return ['top', 'commands', 'mute']
+    return ['lb', 'commands', 'mute']
 
 
 def existing_commands(id):
@@ -69,11 +74,12 @@ def existing_commands(id):
 
 def super_command(command, id):
     command_root = command.split(" ")[0]
-    if command_root.strip() == 'top':
+    if command_root.strip() == 'lb':
         if len(command[4:].split('/')) < 2:
-            return 'Please add enough parameters. You have to call top this way: top game/category(/variable-name/variable-value). (Examples: top botw/Any% , top botw/Any%/Amiibo/No Amiibo). Every game/category/variable name has to be the same as the one speedrun.com uses. Have fun!'
-        print('top called!')
-        params = command[5:].split('/')
+            return 'Please add enough parameters. You have to call lb this way: lb game/category(/variable-name/variable-value). (Examples: lb botw/Any% , lb botw/Any%/Amiibo/No Amiibo). Every game/category/variable name has to be the same as the one speedrun.com uses. Have fun!'
+        print('lb called!')
+        params = command[3:].split('/')
+        print(params)
         try:
             if len(params) == 4:
                 g, c, v, va = params
@@ -84,7 +90,9 @@ def super_command(command, id):
         except KeyError:
             return "Couldn't find any run like that. Try another formatting."
     elif command_root.strip() == 'commands':
-        return existing_commands(id)
+        all_c = existing_commands(id)
+        print(type(all_c))
+        return all_c
 
 
 if __name__=='__main__':
