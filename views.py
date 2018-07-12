@@ -2,10 +2,11 @@ from django.shortcuts import render
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, authenticate
-from .models import TwitchUser
+from django.forms import inlineformset_factory
+from .models import TwitchUser, Command
 from .utils import auth
-from .forms import CommandForm, CommandFormSet
 import datetime
+
 
 def login_view(request):
     if request.user.is_authenticated:
@@ -64,8 +65,10 @@ def login_view(request):
 # TODO MAKE COMMAND VIEWS USE THE AUTH BACKEND
 @login_required(login_url='/burritobot/login/')
 def edit_commands(request):
+    user = request.user
+    CommandInlineFormset = inlineformset_factory(User, Command, fields=('command', 'response'))
     if request.method == 'POST':
-        command_formset = CommandFormSet(request.POST, request.FILES, prefix='existing-commands')
+        command_formset = inlineformset_factory(request.POST, request.FILES, instance=user)
         if command_formset.is_valid():
             command_instances = command_formset.save(commit=False)
             for obj in command_formset.deleted_objects:
@@ -76,19 +79,9 @@ def edit_commands(request):
     return commands(request)
 
 
-@login_required(login_url='/burritobot/login/')
-def new_commands(request):
-    if request.method == 'POST':
-        new_command_form = CommandForm(request.POST, prefix='new-command')
-        if new_command_form.is_valid():
-            new_command = new_command_form.save(commit=False)
-            new_command.user = request.user
-            new_command.save()
-    return commands(request)
-
-
 @login_required(login_url="/burritobot/login/")
 def commands(request):
-    command_formset = CommandFormSet(prefix='existing-commands')
-    new_command_form = CommandForm(prefix='new-command')
-    return render(request, 'burritobot/commands.html', {'command_formset': command_formset, 'new_command_form': new_command_form})
+    user = request.user
+    CommandInlineFormset = inlineformset_factory(User, Command, fields=('command', 'response'))
+    command_formset = CommandInlineFormset(instance=user)
+    return render(request, 'burritobot/commands.html', {'command_formset': command_formset})
