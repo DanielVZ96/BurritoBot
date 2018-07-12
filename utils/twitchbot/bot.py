@@ -77,12 +77,17 @@ async def get_chat_message(line):
         return False
 
 
-async def check_commands(websocket, msg, channel, author):
+async def check_commands(websocket, msg, channel, author, chain=False):
+    if chain:
+        print('Chain!', msg)
     id = database_utils.get_id_from_channel(db_location, channel)
-    if msg[0] == COMMAND_PREFIX:
+    if msg and msg[0] == COMMAND_PREFIX:
         response = database_utils.get_response(db_location, msg[1:], id)
         print(response)
-        if response:
+        if not chain:
+            await check_commands(websocket, response, channel, author, chain=True)
+            chain = True
+        if response and not chain:
             await websocket.send('PRIVMSG #{} :{}'.format(channel.lower(), response))
         elif msg[1:].split(" ")[0] in super_commands.existing_commands(id):
             response = super_commands.super_command(msg[1:], id)
