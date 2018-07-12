@@ -62,24 +62,13 @@ def login_view(request):
     return render(request, 'burritobot/login.html', context)
 
 
-@login_required(login_url='/burritobot/login/')
-def edit_commands(request):
-    user = request.user
-    if request.method == 'POST':
-        command_formset = inlineformset_factory(request.POST, request.FILES, instance=user)
-        if command_formset.is_valid():
-            command_instances = command_formset.save(commit=False)
-            for obj in command_formset.deleted_objects:
-                obj.delete()
-            for edited_command in command_instances:
-                edited_command.user = request.user
-                edited_command.save()
-    return commands(request)
-
-
 @login_required(login_url="/burritobot/login/")
 def commands(request):
     user = request.user
     CommandInlineFormset = inlineformset_factory(User, Command, fields=('command', 'response'))
+    if request.method == 'POST':
+        command_formset = CommandInlineFormset(request.POST, request.FILES, instance=user)
+        if command_formset.is_valid():
+            command_formset.save()
     command_formset = CommandInlineFormset(instance=user)
     return render(request, 'burritobot/commands.html', {'command_formset': command_formset})
