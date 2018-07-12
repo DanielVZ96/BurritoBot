@@ -77,23 +77,26 @@ async def get_chat_message(line):
         return False
 
 
-async def check_commands(websocket, msg, channel, author, chain=False):
-    if chain:
-        print('Chain!', msg)
+async def check_commands(websocket, msg, channel, author):
     id = database_utils.get_id_from_channel(db_location, channel)
     if msg and msg[0] == COMMAND_PREFIX:
         response = database_utils.get_response(db_location, msg[1:], id)
         print(response)
-        if not chain:
-            await check_commands(websocket, response, channel, author, chain=True)
-            chain = True
-        if response and not chain:
-            await websocket.send('PRIVMSG #{} :{}'.format(channel.lower(), response))
-        elif msg[1:].split(" ")[0] in super_commands.existing_commands(id):
+        if response:
+            if response[1:].split(" ")[0] in super_commands.existing_super_commands():
+                print('CHAINED')
+                return await check_commands(websocket, response, channel, author)
+            else:
+                return await send_chat_msg(websocket, channel, response)
+        elif msg[1:].split(" ")[0] in super_commands.existing_super_commands():
             response = super_commands.super_command(msg[1:], id)
             if response:
                 print(response)
-                await websocket.send('PRIVMSG #{} :{}'.format(channel.lower(), response))
+                return await send_chat_msg(websocket, channel, response)
+
+
+async def send_chat_msg(websocket, channel, response):
+    await websocket.send('PRIVMSG #{} :{}'.format(channel.lower(), response))
 
 
 async def _token_channel_pairs():
