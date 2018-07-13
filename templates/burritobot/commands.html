@@ -13,7 +13,9 @@
                 {% csrf_token %}
                 {{ command_formset.management_form }}
                 {% for form in command_formset %}
+                <div class="Form">
                     {{ form }}
+                </div>>
                 {% empty %}
                 <p class="no_commands">There are no commands saved... yet.</p>
                 {% endfor %}
