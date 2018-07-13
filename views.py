@@ -67,7 +67,7 @@ def commands(request):
     user = request.user
     CommandInlineFormset = inlineformset_factory(User, Command, fields=('command', 'response'))
     if request.method == 'POST':
-        command_formset = CommandInlineFormset(request.POST, request.FILES, instance=user)
+        command_formset = CommandInlineFormset(request.POST, request.FILES)
         if command_formset.is_valid():
             command_formset.save()
     command_formset = CommandInlineFormset(instance=user)
