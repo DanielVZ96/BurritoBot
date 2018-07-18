@@ -2,10 +2,10 @@ import requests
 global CLIENT_ID
 import json
 global CLIENT_SECRET_ID
-CLIENT_ID = 'vkanazzpgcy7w9rfhvbgp2pmdw74g6'
-CLIENT_SECRET_ID = '92um4d83q6rgl1f92oamuokqatbua2'
+CLIENT_ID = 'SECRET'
+CLIENT_SECRET_ID = 'SECRET'
 REDIRECT_URI = 'https://www.devz.cl/burritobot/login/'
-REDIRECT_URI = 'http://127.0.0.1:8000/burritobot_app/login/'
+#REDIRECT_URI = 'http://127.0.0.1:8000/burritobot_app/login/'
 
 
 def authorize_request(scope):
