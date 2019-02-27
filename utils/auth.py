@@ -1,11 +1,10 @@
 import requests
-global CLIENT_ID
 import json
-global CLIENT_SECRET_ID
+
 CLIENT_ID = 'SECRET'
 CLIENT_SECRET_ID = 'SECRET'
 REDIRECT_URI = 'https://www.devz.cl/burritobot/login/'
-#REDIRECT_URI = 'http://127.0.0.1:8000/burritobot_app/login/'
+# REDIRECT_URI = 'http://127.0.0.1:8000/burritobot_app/login/'
 
 
 def authorize_request(scope):
@@ -30,3 +29,9 @@ def get_user_dict(token):
     }
     request = requests.get(url, headers=headers)
     return json.loads(request.text)
+
+def refresh_token(token):
+    url = 'https://id.twitch.tv/oauth2/token?client_id={}&client_secret={}&grant_type=refresh_token&refresh_token={}'.format(CLIENT_ID, CLIENT_SECRET_ID, token)
+    response = requests.post(url)
+    if response.status_code == requests.codes.ok:
+        return response.json()
