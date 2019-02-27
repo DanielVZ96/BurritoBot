@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand, CommandError
 from burritobot.models import TwitchUser
-from utils.auth import refresh_token
+from burritobot.utils.auth import refresh_token
 
 def handle(self, *args, **kwargs):
     try:
